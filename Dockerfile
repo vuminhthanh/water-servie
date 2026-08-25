@@ -48,8 +48,9 @@ RUN mkdir -p \
     storage/framework/views \
     storage/logs \
     bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache \
+    && chmod +x docker-entrypoint.sh
 
 RUN php artisan optimize:clear || true
 
-CMD ["sh", "-c", "php -S 0.0.0.0:${PORT} server.php"]
+CMD ["./docker-entrypoint.sh"]

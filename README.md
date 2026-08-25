@@ -1,5 +1,34 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
+## Deploy production và dữ liệu ban đầu
+
+Container tự chạy `php artisan migrate --force` mỗi khi khởi động. Database phải là MySQL bên ngoài container hoặc có persistent volume; không lưu database trong filesystem tạm của container.
+
+Cấu hình tối thiểu trên nền tảng deploy:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:...
+APP_URL=https://ten-mien-cua-ban.vn
+
+DB_CONNECTION=mysql
+DB_HOST=...
+DB_PORT=3306
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
+
+SEED_PRODUCTION_DATA=true
+ADMIN_NAME="Quản trị viên"
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=mat-khau-it-nhat-8-ky-tu
+```
+
+Ở lần deploy đầu tiên, `SEED_PRODUCTION_DATA=true` sẽ tạo hoặc cập nhật tài khoản admin và nạp danh mục sản phẩm bằng `ProductCatalogSeeder`. Seeder không tạo khách hàng, kỹ thuật viên hay đơn dịch vụ demo. Sau khi deploy thành công, đổi `SEED_PRODUCTION_DATA=false` để các lần khởi động sau không đặt lại mật khẩu admin.
+
+Nếu production đã có database cũ, chỉ cần trỏ các biến `DB_*` vào database đó và để `SEED_PRODUCTION_DATA=false`; dữ liệu nghiệp vụ hiện có sẽ được giữ nguyên.
+
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
