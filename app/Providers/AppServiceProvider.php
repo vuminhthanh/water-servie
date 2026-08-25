@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Filament\Filament;
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Support\Facades\URL;
 class AppServiceProvider extends ServiceProvider
 {
     /**
