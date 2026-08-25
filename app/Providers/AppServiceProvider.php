@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
         config([
             'filament.widgets.default.account' => false,
             'filament.widgets.default.info' => false,
