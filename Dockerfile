@@ -1,4 +1,4 @@
-FROM node:22 AS frontend
+FROM node:18 AS frontend
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run production
 
 
 FROM php:8.3-cli
@@ -33,7 +33,7 @@ WORKDIR /app
 
 COPY . .
 
-COPY --from=frontend /app/public/build ./public/build
+COPY --from=frontend /app/public ./public
 
 RUN composer install \
     --no-dev \
@@ -50,4 +50,6 @@ RUN mkdir -p \
     bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-CMD ["sh", "-c", "php -S 0.0.0.0:${PORT} -t public public/index.php"]
+RUN php artisan optimize:clear || true
+
+CMD ["sh", "-c", "php -S 0.0.0.0:${PORT} server.php"]
