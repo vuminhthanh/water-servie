@@ -1,0 +1,2 @@
+<?php
+namespace App\Enums; final class ServiceOrderType extends StringEnumCast{const INSPECTION='inspection',FILTER_REPLACEMENT='filter_replacement',REPAIR='repair',INSTALLATION='installation',MACHINE_SALE='machine_sale',MAINTENANCE='maintenance';public static function values():array{return[self::INSPECTION,self::FILTER_REPLACEMENT,self::REPAIR,self::INSTALLATION,self::MACHINE_SALE,self::MAINTENANCE];}}

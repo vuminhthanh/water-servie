@@ -1,0 +1,3 @@
+<?php
+namespace Database\Factories;use App\Enums\{ServiceOrderType,ServiceOrderStatus,PaymentStatus};use App\Models\{Customer,ServiceOrder};use Illuminate\Database\Eloquent\Factories\Factory;use Illuminate\Support\Str;
+class ServiceOrderFactory extends Factory{protected $model=ServiceOrder::class;public function definition(){return['order_code'=>'SO'.now()->format('YmdHis').Str::upper(Str::random(4)),'customer_id'=>function(){return Customer::create(['customer_code'=>'CUS-'.Str::upper(Str::random(10)),'full_name'=>$this->faker->name,'phone'=>$this->faker->numerify('09########'),'customer_type'=>'individual','status'=>'active'])->id;},'order_type'=>ServiceOrderType::MAINTENANCE,'status'=>ServiceOrderStatus::NEW,'payment_status'=>PaymentStatus::UNPAID];}}

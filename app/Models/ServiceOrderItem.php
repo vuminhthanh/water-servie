@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;
+class ServiceOrderItem extends Model{use HasFactory;protected $fillable=['service_order_id','product_id','item_type','name','sku','quantity','unit_price','cost_price','discount_amount','total_amount','note'];protected $casts=['quantity'=>'decimal:2','unit_price'=>'decimal:2','cost_price'=>'decimal:2','discount_amount'=>'decimal:2','total_amount'=>'decimal:2'];public function serviceOrder(){return $this->belongsTo(ServiceOrder::class);}public function product(){return $this->belongsTo(Product::class)->withTrashed();}}

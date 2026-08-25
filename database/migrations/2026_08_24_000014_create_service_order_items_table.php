@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+class CreateServiceOrderItemsTable extends Migration{public function up(){Schema::create('service_order_items',function(Blueprint $t){$t->id();$t->foreignId('service_order_id')->constrained()->cascadeOnDelete();$t->foreignId('product_id')->nullable()->constrained()->nullOnDelete();$t->string('item_type',30)->index();$t->string('name');$t->string('sku',100)->nullable();$t->decimal('quantity',10,2)->default(1);foreach(['unit_price','cost_price','discount_amount','total_amount'] as $c)$t->decimal($c,15,2)->default(0);$t->text('note')->nullable();$t->timestamps();});}public function down(){Schema::dropIfExists('service_order_items');}}

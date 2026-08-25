@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+class AddServiceOrderAndTechnicianForeignKeysToFilterHistories extends Migration{public function up(){Schema::table('filter_replacement_histories',function(Blueprint $t){$t->foreign('service_order_id')->references('id')->on('service_orders')->nullOnDelete();$t->foreign('technician_id')->references('id')->on('technicians')->nullOnDelete();});}public function down(){Schema::table('filter_replacement_histories',function(Blueprint $t){$t->dropForeign(['service_order_id']);$t->dropForeign(['technician_id']);});}}

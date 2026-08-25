@@ -1,0 +1,3 @@
+<?php
+namespace App\Actions\ServiceOrders;use App\Domain\ServiceOrders\ServiceOrderStatusTransition;use App\Enums\ServiceOrderStatus;use App\Models\{ServiceOrder,ServiceOrderStatusHistory};use Illuminate\Support\Facades\DB;
+class MarkTechnicianOnTheWay{public function execute(ServiceOrder $order):ServiceOrder{return DB::transaction(function()use($order){$o=ServiceOrder::lockForUpdate()->findOrFail($order->id);$old=(string)$o->status;app(ServiceOrderStatusTransition::class)->assertAllowed($old,ServiceOrderStatus::ON_THE_WAY);$o->update(['status'=>ServiceOrderStatus::ON_THE_WAY]);ServiceOrderStatusHistory::create(['service_order_id'=>$o->id,'old_status'=>$old,'new_status'=>ServiceOrderStatus::ON_THE_WAY]);return $o->refresh();});}}

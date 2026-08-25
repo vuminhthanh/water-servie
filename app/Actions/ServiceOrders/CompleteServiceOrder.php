@@ -1,0 +1,12 @@
+<?php
+namespace App\Actions\ServiceOrders;
+use App\Domain\ServiceOrders\ServiceOrderStatusTransition;use App\Enums\{PaymentStatus,ServiceOrderStatus,TechnicianAssignmentStatus,TechnicianWorkingStatus};use App\Models\{InventoryMovement,Product,ServiceOrder,ServiceOrderStatusHistory};use DomainException;use Illuminate\Support\Facades\DB;
+class CompleteServiceOrder
+{
+ public function execute(ServiceOrder $order):ServiceOrder{return DB::transaction(function()use($order){
+  $o=ServiceOrder::lockForUpdate()->findOrFail($order->id);$old=(string)$o->status;app(ServiceOrderStatusTransition::class)->assertAllowed($old,ServiceOrderStatus::COMPLETED);
+  $requirements=$o->items()->whereNotNull('product_id')->selectRaw('product_id, SUM(quantity) quantity')->groupBy('product_id')->orderBy('product_id')->get();
+  foreach($requirements as $requirement){$product=Product::withTrashed()->lockForUpdate()->findOrFail($requirement->product_id);$required=(float)$requirement->quantity;$available=(float)$product->stock_quantity;if($available<$required)throw new DomainException("Không đủ tồn kho cho {$product->name}. Cần {$required}, hiện có {$available}.");$balance=$available-$required;$product->update(['stock_quantity'=>$balance]);InventoryMovement::create(['product_id'=>$product->id,'type'=>'service_order_completed','quantity_change'=>-$required,'balance_after'=>$balance,'service_order_id'=>$o->id,'note'=>'Xuất kho khi hoàn thành đơn '.$o->order_code]);}
+  $o=app(RecalculateServiceOrderTotals::class)->execute($o);$at=now();$active=$o->assignments()->whereIn('status',[TechnicianAssignmentStatus::ASSIGNED,TechnicianAssignmentStatus::ACCEPTED,TechnicianAssignmentStatus::IN_PROGRESS])->get();foreach($active as $a){$a->update(['status'=>TechnicianAssignmentStatus::COMPLETED,'completed_at'=>$at]);$a->technician()->update(['working_status'=>TechnicianWorkingStatus::AVAILABLE]);}$o->update(['status'=>ServiceOrderStatus::COMPLETED,'completed_at'=>$at,'paid_amount'=>$o->total_amount,'payment_status'=>PaymentStatus::PAID]);ServiceOrderStatusHistory::create(['service_order_id'=>$o->id,'old_status'=>$old,'new_status'=>ServiceOrderStatus::COMPLETED]);$p=['last_service_at'=>$at];if($o->input_tds!==null)$p['water_input_tds']=$o->input_tds;if($o->output_tds!==null)$p['water_output_tds']=$o->output_tds;if($o->purifier_id)$o->purifier()->update($p);$o->customer()->update(['last_service_at'=>$at]);return $o->refresh();
+ });}
+}

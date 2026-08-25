@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+class CreateServiceOrderStatusHistoriesTable extends Migration{public function up(){Schema::create('service_order_status_histories',function(Blueprint $t){$t->id();$t->foreignId('service_order_id')->constrained()->cascadeOnDelete();$t->string('old_status',30)->nullable();$t->string('new_status',30)->index();$t->foreignId('changed_by')->nullable()->constrained('users')->nullOnDelete();$t->text('note')->nullable();$t->timestamp('created_at')->useCurrent();$t->index(['service_order_id','created_at']);});}public function down(){Schema::dropIfExists('service_order_status_histories');}}
