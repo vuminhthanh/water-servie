@@ -27,6 +27,8 @@ ADMIN_PASSWORD=mat-khau-it-nhat-8-ky-tu
 
 Ở lần deploy đầu tiên, `SEED_PRODUCTION_DATA=true` sẽ tạo hoặc cập nhật tài khoản admin và nạp danh mục sản phẩm bằng `ProductCatalogSeeder`. Seeder không tạo khách hàng, kỹ thuật viên hay đơn dịch vụ demo. Sau khi deploy thành công, đổi `SEED_PRODUCTION_DATA=false` để các lần khởi động sau không đặt lại mật khẩu admin.
 
+Các giá trị `ADMIN_EMAIL` và `ADMIN_PASSWORD` phải đúng với thông tin dùng để đăng nhập. Nếu production đã chạy nhưng báo sai tài khoản, đặt lại `SEED_PRODUCTION_DATA=true`, kiểm tra hai biến admin rồi redeploy. Sau khi đăng nhập được, chuyển biến seed về `false`.
+
 Nếu production đã có database cũ, chỉ cần trỏ các biến `DB_*` vào database đó và để `SEED_PRODUCTION_DATA=false`; dữ liệu nghiệp vụ hiện có sẽ được giữ nguyên.
 
 <p align="center">

@@ -15,10 +15,12 @@ until php artisan migrate --force; do
     sleep 3
 done
 
-if [ "${SEED_PRODUCTION_DATA:-false}" = "true" ]; then
-    php artisan db:seed --class='Database\Seeders\ProductionBootstrapSeeder' --force
-fi
+case "${SEED_PRODUCTION_DATA:-false}" in
+    true|TRUE|1|yes|YES)
+        php artisan db:seed --class='Database\Seeders\ProductionBootstrapSeeder' --force
+        ;;
+esac
 
 php artisan optimize:clear
 
-exec php -S "0.0.0.0:${PORT:-8000}" server.php
+exec php -S "0.0.0.0:${PORT:-8000}" -t public server.php

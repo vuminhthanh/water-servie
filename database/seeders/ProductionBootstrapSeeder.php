@@ -11,6 +11,8 @@ class ProductionBootstrapSeeder extends Seeder
 {
     public function run()
     {
+        $this->call(ProductCatalogSeeder::class);
+
         $email = trim((string) env('ADMIN_EMAIL'));
         $password = (string) env('ADMIN_PASSWORD');
 
@@ -36,7 +38,5 @@ class ProductionBootstrapSeeder extends Seeder
                 'roles' => [],
             ]
         );
-
-        $this->call(ProductCatalogSeeder::class);
     }
 }
